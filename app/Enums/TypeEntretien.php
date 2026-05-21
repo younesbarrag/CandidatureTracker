@@ -13,11 +13,11 @@ enum TypeEntretien: string
     public function label(): string
     {
         return match($this) {
-            self::Telephone  => '📞 Téléphone',
-            self::Visio      => '💻 Vidéoconférence',
-            self::Presentiel => '🏢 Présentiel',
-            self::Technique  => '⚙️ Test technique',
-            self::Rh         => '👥 Entretien RH',
+            self::Telephone  => ' Téléphone',
+            self::Visio      => ' Vidéoconférence',
+            self::Presentiel => ' Présentiel',
+            self::Technique  => ' Test technique',
+            self::Rh         => ' Entretien RH',
         };
     }
 
