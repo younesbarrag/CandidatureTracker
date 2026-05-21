@@ -17,7 +17,7 @@
         ['label' => 'Candidatures actives', 'value' => $stats['total'],                'icon' => '📄', 'color' => 'blue'],
         ['label' => 'Entretiens en attente', 'value' => $stats['entretiens_planifies'], 'icon' => '📅', 'color' => 'purple'],
         ['label' => 'Offres reçues',          'value' => $stats['offres_recues'],        'icon' => '🎉', 'color' => 'green'],
-        ['label' => 'Archivées',              'value' => 0,                              'icon' => '📁', 'color' => 'gray'],
+        ['label' => 'Archivées',              'value' => $stats['archives'],             'icon' => '📁', 'color' => 'gray'],
     ];
     @endphp
 

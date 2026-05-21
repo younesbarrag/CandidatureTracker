@@ -12,10 +12,10 @@ enum ResultatEntretien: string
     public function label(): string
     {
         return match($this) {
-            self::EnAttente => '⏳ En attente',
-            self::Positif   => '✅ Positif',
-            self::Negatif   => '❌ Négatif',
-            self::SansSuite => '➖ Sans suite',
+            self::EnAttente => ' En attente',
+            self::Positif   => ' Positif',
+            self::Negatif   => ' Négatif',
+            self::SansSuite => ' Sans suite',
         };
     }
 

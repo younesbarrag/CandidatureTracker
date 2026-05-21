@@ -26,45 +26,51 @@ class Candidature extends Model
 
     ];
 
-    protected $casts =[
-        'date_candidateur'=> 'date',
-        'created_at'=>'datetime',
-        'update_at'=>'datetime',
+    protected $casts = [
+        'date_candidature' => 'date',
+        'statut' => \App\Enums\StatutCandidature::class,
+        'priorite' => \App\Enums\PrioriteCandidature::class,
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
-    public function user():BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-   public function entretiens(): HasMany
+    public function entretiens(): HasMany
     {
         return $this->hasMany(Entretien::class);
     }
 
+    /**
+     * ACCESSORS
+     */
 
-    public function getStatutFrancaisAttribute()
+    public function getStatutLabelAttribute(): string
     {
-        $statuts = [
-            'candidature_envoyee'=>'Candidature envoyee',
-            'en_attente'=>'En attente',
-            'entretien_planifie'=>'Entretien planifie',
-            'offre_recue'=>'Offre recue',
-            'refusee'=>'Refusee',
-            'abandonnee'=> 'Abandonnee',
-];
-
-return $statuts [$this->statuts]??$this->statuts;
+        return $this->statut?->label() ?? (string)$this->statut;
     }
-     public function getPrioriteLabelAttribute()
-    {
-        $priorites = [
-            'haute' => ' Haute',
-            'moyenne' => ' Moyenne',
-            'basse' => ' Basse',
-        ];
 
-        return $priorites[$this->priorite] ?? $this->priorite;
+    public function getStatutBadgeAttribute(): string
+    {
+        return $this->statut?->badgeClass() ?? 'badge-gray';
+    }
+
+    public function getPrioriteLabelAttribute(): string
+    {
+        return $this->priorite?->label() ?? (string)$this->priorite;
+    }
+
+    public function getPrioriteBadgeAttribute(): string
+    {
+        return $this->priorite?->badgeClass() ?? 'badge-gray';
+    }
+
+    public function getFichierAttribute()
+    {
+        return $this->cv_path;
     }
 
     /**

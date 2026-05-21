@@ -36,27 +36,32 @@
         .badge-gray   { @apply bg-gray-100 text-gray-700; }
 
         /* ── Cards ───────────────────────────────────────────────── */
-        .card { @apply bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden; }
+        .card { @apply bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300; }
+        .card:hover { @apply shadow-md border-brand-200; }
 
         /* ── Inputs ──────────────────────────────────────────────── */
         .input {
             @apply w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm
                    focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                   transition placeholder-gray-400;
+                   transition-all placeholder-gray-400;
         }
+        .input:focus { @apply bg-white; }
         .input-error { @apply border-red-400 bg-red-50; }
 
         /* ── Buttons ─────────────────────────────────────────────── */
-        .btn         { @apply inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-offset-1; }
-        .btn-primary { @apply btn bg-brand-600 text-white hover:bg-brand-700 focus:ring-brand-500; }
+        .btn         { @apply inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-95; }
+        .btn-primary { @apply btn bg-brand-600 text-white hover:bg-brand-700 focus:ring-brand-500 shadow-sm hover:shadow-brand-200; }
         .btn-secondary { @apply btn bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-400; }
         .btn-danger   { @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500; }
         .btn-ghost    { @apply btn text-gray-600 hover:bg-gray-100 focus:ring-gray-300; }
         .btn-sm       { @apply !px-3 !py-1.5 !text-xs; }
 
         /* ── Nav active ──────────────────────────────────────────── */
-        .nav-link       { @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition; }
+        .nav-link       { @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200; }
+        .nav-link svg   { @apply transition-transform duration-200; }
+        .nav-link:hover svg { @apply text-brand-500 scale-110; }
         .nav-link.active { @apply bg-brand-50 text-brand-700 font-semibold; }
+        .nav-link.active svg { @apply text-brand-600; }
 
         /* ── Tables ──────────────────────────────────────────────── */
         .table-row { @apply hover:bg-gray-50 transition border-b border-gray-100 last:border-0; }
@@ -70,7 +75,7 @@
     <aside class="hidden md:flex md:w-64 md:flex-col bg-white border-r border-gray-100 fixed inset-y-0">
         {{-- Logo --}}
         <div class="flex items-center gap-3 px-6 py-5 border-b border-gray-100">
-            <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">C</div>
+            <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm">C</div>
             <div>
                 <p class="text-sm font-bold text-gray-900">CandidatureTracker</p>
                 <p class="text-xs text-gray-500">Gestion des candidatures</p>
@@ -89,7 +94,7 @@
             </a>
 
             <a href="{{ route('candidatures.index') }}"
-               class="nav-link {{ request()->routeIs('candidatures.*') ? 'active' : '' }}">
+               class="nav-link {{ request()->routeIs('candidatures.*') && !request()->routeIs('candidatures.archives') ? 'active' : '' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -134,7 +139,7 @@
     <main class="flex-1 md:ml-64 min-h-full flex flex-col">
 
         {{-- Top bar --}}
-        <header class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+        <header class="bg-white/80 backdrop-blur-md sticky top-0 z-10 border-b border-gray-100 px-6 py-4 flex items-center justify-between">
             <h1 class="text-lg font-bold text-gray-900">@yield('page-title', 'Dashboard')</h1>
             <div class="flex items-center gap-2">
                 @yield('page-actions')
@@ -142,23 +147,25 @@
         </header>
 
         {{-- Flash messages --}}
-        @if(session('success'))
-            <div class="mx-6 mt-4 flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-sm" role="alert">
-                <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                {{ session('success') }}
-            </div>
-        @endif
+        <div class="px-6 space-y-4">
+            @if(session('success'))
+                <div class="mt-4 flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-sm animate-in fade-in slide-in-from-top-4 duration-300" role="alert">
+                    <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ session('success') }}
+                </div>
+            @endif
 
-        @if(session('error'))
-            <div class="mx-6 mt-4 flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm" role="alert">
-                <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                </svg>
-                {{ session('error') }}
-            </div>
-        @endif
+            @if(session('error'))
+                <div class="mt-4 flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm animate-in fade-in slide-in-from-top-4 duration-300" role="alert">
+                    <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ session('error') }}
+                </div>
+            @endif
+        </div>
 
         {{-- Page content --}}
         <div class="flex-1 px-6 py-6">

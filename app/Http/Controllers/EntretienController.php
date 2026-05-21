@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Candidature;
 use App\Models\Entretien;
-use App\Http\Requests\StoreEntretienRequest;
-use App\Http\Requests\UpdateEntretienRequest;
-use Illuminate\Http\Request;    
+use App\Http\Requests\Entretien\StoreEntretienRequest;
+use App\Http\Requests\Entretien\UpdateEntretienRequest;
+use App\Enums\TypeEntretien;
+use App\Enums\ResultatEntretien;
+use Illuminate\Http\Request;
 
 
 class EntretienController extends Controller
@@ -20,8 +22,8 @@ class EntretienController extends Controller
 
         return view('entretiens.create', [
             'candidature' => $candidature,
-            'types' => $this->types(),
-            'resultats' => $this->resultats(),
+            'types' => TypeEntretien::options(),
+            'resultats' => ResultatEntretien::options(),
         ]);
     }
 
@@ -49,8 +51,8 @@ class EntretienController extends Controller
         return view('entretiens.edit', [
             'entretien' => $entretien,
             'candidature' => $entretien->candidature,
-            'types' => $this->types(),
-            'resultats' => $this->resultats(),
+            'types' => TypeEntretien::options(),
+            'resultats' => ResultatEntretien::options(),
         ]);
     }
 
@@ -82,30 +84,5 @@ class EntretienController extends Controller
         return redirect()
             ->route('candidatures.show', $candidature)
             ->with('success', 'Entretien supprimé');
-    }
-
-    /**
-     * HELPERS (clean version)
-     */
-
-    private function types()
-    {
-        return [
-            'telephone' => 'Téléphone',
-            'visio' => 'Vidéo',
-            'presentiel' => 'Présentiel',
-            'technique' => 'Test technique',
-            'rh' => 'RH',
-        ];
-    }
-
-    private function resultats()
-    {
-        return [
-            'en_attente' => 'En attente',
-            'positif' => 'Positif',
-            'negatif' => 'Négatif',
-            'sans_suite' => 'Sans suite',
-        ];
     }
 }

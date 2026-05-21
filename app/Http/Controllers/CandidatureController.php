@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Candidature;
-use App\Http\Requests\StoreCandidatureRequest;
-use App\Http\Requests\UpdateCandidatureRequest;
+use App\Http\Requests\Candidature\StoreCandidatureRequest;
+use App\Http\Requests\Candidature\UpdateCandidatureRequest;
+use App\Enums\StatutCandidature;
+use App\Enums\PrioriteCandidature;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -34,8 +36,8 @@ class CandidatureController extends Controller
 
         return view('candidatures.index', [
             'candidatures' => $candidatures,
-            'statuts' => $this->getStatutsList(),
-            'priorites' => $this->getPrioritesList(),
+            'statuts' => StatutCandidature::options(),
+            'priorites' => PrioriteCandidature::options(),
         ]);
     }
 
@@ -45,8 +47,8 @@ class CandidatureController extends Controller
     public function create()
     {
         return view('candidatures.create', [
-            'statuts' => $this->getStatutsList(),
-            'priorites' => $this->getPrioritesList(),
+            'statuts' => StatutCandidature::options(),
+            'priorites' => PrioriteCandidature::options(),
         ]);
     }
 
@@ -61,7 +63,7 @@ class CandidatureController extends Controller
 
         if ($request->hasFile('fichier')) {
             $path = $request->file('fichier')->store('candidatures', 'public');
-            $candidature->update(['fichier' => $path]);
+            $candidature->update(['cv_path' => $path]);
         }
 
         return redirect()
@@ -90,8 +92,8 @@ class CandidatureController extends Controller
 
         return view('candidatures.edit', [
             'candidature' => $candidature,
-            'statuts' => $this->getStatutsList(),
-            'priorites' => $this->getPrioritesList(),
+            'statuts' => StatutCandidature::options(),
+            'priorites' => PrioriteCandidature::options(),
         ]);
     }
 
@@ -106,12 +108,12 @@ class CandidatureController extends Controller
 
         if ($request->hasFile('fichier')) {
 
-            if ($candidature->fichier) {
-                Storage::disk('public')->delete($candidature->fichier);
+            if ($candidature->cv_path) {
+                Storage::disk('public')->delete($candidature->cv_path);
             }
 
             $path = $request->file('fichier')->store('candidatures', 'public');
-            $candidature->update(['fichier' => $path]);
+            $candidature->update(['cv_path' => $path]);
         }
 
         return redirect()
@@ -131,6 +133,20 @@ class CandidatureController extends Controller
         return redirect()
             ->route('candidatures.index')
             ->with('success', 'Candidature archivée');
+    }
+
+    /**
+     * DOWNLOAD
+     */
+    public function download(Candidature $candidature)
+    {
+        $this->authorize('view', $candidature);
+
+        if (!$candidature->cv_path || !Storage::disk('public')->exists($candidature->cv_path)) {
+            return back()->with('error', 'Le fichier n\'existe pas.');
+        }
+
+        return Storage::disk('public')->download($candidature->cv_path);
     }
 
     /**
@@ -164,29 +180,5 @@ class CandidatureController extends Controller
         $candidature->restore();
 
         return back()->with('success', 'Candidature restaurée');
-    }
-
-    /**
-     * HELPERS
-     */
-    private function getStatutsList()
-    {
-        return [
-            'candidature_envoyee' => 'Candidature envoyée',
-            'en_attente' => 'En attente',
-            'entretien_planifie' => 'Entretien planifié',
-            'offre_recue' => 'Offre reçue',
-            'refusee' => 'Refusée',
-            'abandonnee' => 'Abandonnée',
-        ];
-    }
-
-    private function getPrioritesList()
-    {
-        return [
-            'haute' => ' Haute',
-            'moyenne' => ' Moyenne',
-            'basse' => ' Basse',
-        ];
     }
 }

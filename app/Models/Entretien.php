@@ -28,6 +28,8 @@ class Entretien extends Model
      */
     protected $casts = [
         'date_heure' => 'datetime',
+        'type' => \App\Enums\TypeEntretien::class,
+        'resultat' => \App\Enums\ResultatEntretien::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -47,25 +49,19 @@ class Entretien extends Model
      * ACCESSORS (read-friendly labels)
      */
 
-    public function getTypeLabelAttribute()
+    public function getTypeLabelAttribute(): string
     {
-        return [
-            'telephone' => 'Entretien téléphonique',
-            'visio' => 'Entretien vidéo',
-            'presentiel' => 'Entretien présentiel',
-            'technique' => 'Test technique',
-            'rh' => 'Entretien RH',
-        ][$this->type] ?? $this->type;
+        return $this->type?->label() ?? (string)$this->type;
     }
 
-    public function getResultatLabelAttribute()
+    public function getResultatLabelAttribute(): string
     {
-        return [
-            'en_attente' => ' En attente',
-            'positif' => ' Positif',
-            'negatif' => ' Négatif',
-            'sans_suite' => ' Sans suite',
-        ][$this->resultat] ?? $this->resultat;
+        return $this->resultat?->label() ?? (string)$this->resultat;
+    }
+
+    public function getResultatBadgeAttribute(): string
+    {
+        return $this->resultat?->badgeClass() ?? 'badge-gray';
     }
 
     /**
