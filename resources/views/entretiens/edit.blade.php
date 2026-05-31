@@ -1,46 +1,35 @@
 @extends('layouts.app')
 
-@section('title', 'Modifier le rendez-vous')
-@section('page-title', 'Édition d\'entretien')
-
-@section('page-actions')
-    <a href="{{ route('candidatures.show', $entretien->candidature) }}" class="btn-secondary">Annuler</a>
-@endsection
+@section('title', 'Modifier le Rendez-vous')
 
 @section('content')
 
-<div class="max-w-2xl mx-auto">
-    <div class="mb-6 flex items-center gap-3 text-sm font-medium">
-        <a href="{{ route('candidatures.show', $entretien->candidature) }}" class="text-brand-600 hover:text-brand-700 flex items-center gap-1.5 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            {{ $entretien->candidature->entreprise }}
+<div class="max-w-4xl mx-auto">
+    {{-- Header --}}
+    <div class="mb-10 flex items-center justify-between">
+        <div>
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Modifier l'Entretien</h2>
+            <p class="text-slate-500 font-medium mt-1">Édition du rendez-vous pour <strong>{{ $entretien->candidature->entreprise }}</strong>.</p>
+        </div>
+        <a href="{{ route('candidatures.show', $entretien->candidature) }}" class="p-3 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-2xl transition-all">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </a>
-        <span class="text-gray-300">/</span>
-        <span class="text-gray-500">{{ $entretien->candidature->poste }}</span>
     </div>
 
-    <div class="card p-8 md:p-10">
-        <div class="mb-10 flex items-center gap-4">
-            <div class="w-12 h-12 bg-brand-50 text-brand-600 rounded-xl flex items-center justify-center border border-brand-100">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            </div>
-            <div>
-                <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Modifier l'entretien</h2>
-                <p class="text-gray-500 text-sm">Mettez à jour les informations du rendez-vous.</p>
-            </div>
-        </div>
-
-        <form method="POST" action="{{ route('entretiens.update', $entretien) }}" class="space-y-8">
+    {{-- Form Card --}}
+    <div class="bg-white rounded-[2.5rem] shadow-premium border border-slate-50 overflow-hidden">
+        <form method="POST" action="{{ route('entretiens.update', $entretien) }}" class="p-8 md:p-12">
             @csrf
             @method('PUT')
 
             @include('entretiens._form')
 
-            <div class="flex items-center gap-4 pt-8 border-t border-gray-100">
-                <button type="submit" class="btn-primary px-8">
-                    💾 Sauvegarder les modifications
+            <div class="mt-12 pt-10 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-end gap-4">
+                <a href="{{ route('candidatures.show', $entretien->candidature) }}" class="text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors px-6">Abandonner</a>
+                <button type="submit" class="w-full sm:w-auto btn-primary !px-10 !py-4 text-base">
+                    Mettre à jour
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
                 </button>
-                <a href="{{ route('candidatures.show', $entretien->candidature) }}" class="btn-ghost">Abandonner</a>
             </div>
         </form>
     </div>
